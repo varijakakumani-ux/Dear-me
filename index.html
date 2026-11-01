@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dear Me</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section id="welcome">
+  <h1>Dear Me</h1>
+  <p class="tagline">Write today.<br>Open when the time comes.</p>
+  <button class="env" id="envelope" aria-label="Open the envelope">
+    <i class="back"></i><i class="paper">💌</i><i class="front"></i><i class="flap"></i>
+  </button>
+  <p class="tap">Tap the envelope</p>
+</section>
+
+<main id="app" class="hidden">
+  <div class="top">
+    <div><h1>Dear Me</h1><p id="greeting"></p><p id="quote" class="quote"></p></div>
+    <div class="row" style="flex-wrap:nowrap"><button class="icon-btn" id="calBtn" aria-label="Calendar">📅</button><button class="icon-btn" id="insBtn" aria-label="Insights">📊</button><button class="icon-btn" id="settingsBtn" aria-label="Settings">⚙️</button><button class="icon-btn" id="themeBtn" aria-label="Switch theme">🌙</button></div>
+  </div>
+
+  <div class="card">
+    <label for="title">Title</label>
+    <input id="title" type="text" maxlength="80" placeholder="Give your letter a title">
+
+    <label for="message">Your letter</label>
+    <textarea id="message" maxlength="5000" placeholder="Write something for your future self…"></textarea>
+    <div class="row between" style="margin-top:6px"><div class="row"><button type="button" class="small" id="promptBtn">💡 Prompt</button><select id="tplSel" class="small" aria-label="Insert a template" style="width:auto"></select><button type="button" class="small" id="focusBtn">🧘 Focus</button><button type="button" class="small" id="micBtn">🎤 Dictate</button><label class="small" style="margin:0;cursor:pointer">🖼 Photo<input type="file" id="imgIn" accept="image/*" class="hidden"></label><button type="button" class="small" id="timerBtn">⏱ Timer</button><button type="button" class="small" id="tplMake">💾 Save as template</button></div><div class="count"><span id="words">0</span> words · <span id="count">0</span> / 5000</div></div>
+
+    <div class="lbl">How are you feeling?</div>
+    <div class="row" id="moods"></div>
+
+    <div id="imgPrev" class="imgprev hidden"></div>
+    <label for="tags">Tags <small>(comma separated)</small></label>
+    <input id="tags" type="text" maxlength="80" placeholder="e.g. college, new job, travel">
+
+    <div class="lbl">Category</div>
+    <div class="row" id="cats"></div>
+
+    <label for="unlockDate">Open on</label>
+    <input id="unlockDate" type="date">
+    <div class="row" id="presets" style="margin-top:10px"></div>
+
+    <label class="chk"><input type="checkbox" id="encOn"> 🔐 Protect with a password <small>(can’t be recovered if forgotten)</small></label>
+    <input id="encPw" type="password" class="hidden" placeholder="Password (4+ characters)" autocomplete="new-password">
+
+    <label class="chk"><input type="checkbox" id="recOn"> 🔁 Repeat this letter</label>
+    <div class="row hidden" id="recBox">
+      <select id="recEvery" aria-label="Repeat interval" style="width:auto"><option value="weekly">Every week</option><option value="monthly">Every month</option><option value="yearly">Every year</option></select>
+      <input type="number" id="recCount" min="2" max="52" value="4" style="width:90px" aria-label="Number of letters"> <span>letters in total</span>
+    </div>
+
+    <div class="err" id="err" role="alert"></div>
+    <button class="primary" id="saveBtn">🔒 Lock my letter</button>
+    <button class="small hidden" id="cancelEdit" style="width:100%;margin-top:10px">Cancel editing</button>
+  </div>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="stats">
+    <div class="stat"><b id="sTotal">0</b><span>Letters</span></div>
+    <div class="stat"><b id="sLocked">0</b><span>Locked</span></div>
+    <div class="stat"><b id="sReady">0</b><span>Opened</span></div>
+    <div class="stat"><b id="sWords">0</b><span>Words</span></div>
+    <div class="stat"><b id="sStreak">0</b><span>Day streak</span></div>
+  </div>
+
+  <div class="tools">
+    <h2>My letters</h2>
+    <div class="row">
+      <input id="search" type="search" placeholder="Search letters…" aria-label="Search letters">
+      <select id="sort" aria-label="Sort letters">
+        <option value="soon">Opens soonest</option>
+        <option value="new">Newest written</option>
+        <option value="old">Oldest written</option>
+      </select>
+      <select id="catFilter" aria-label="Filter by category"></select>
+      <select id="moodFilter" aria-label="Filter by mood"></select>
+    </div>
+    <div class="row" id="filters"></div>
+    <div class="row"><button class="small" id="selBtn">☑ Select</button></div>
+    <div class="row hidden" id="bulkBar"><span id="bulkCount">0 selected</span><button class="small" id="selAll">Select all shown</button><button class="small" id="bulkFav">⭐ Favorite</button><button class="del" id="bulkDel">Delete</button></div>
+    <div id="letters"></div>
+    <button class="small hidden" id="moreBtn" style="width:100%;margin-top:14px">Show more</button>
+    <div class="row" style="margin-top:24px">
+      <button class="small" id="csvBtn">⬇ Export CSV</button>
+      <button class="small" id="randBtn">🎲 Surprise me</button>
+      <button class="small" id="exportBtn">⬇ Back up letters</button>
+      <button class="small" id="importBtn">⬆ Restore backup</button>
+      <input type="file" id="importFile" accept="application/json" class="hidden">
+    </div>
+  </div>
+</main>
+
+<dialog id="dlg">
+  <p id="dlgText"></p>
+  <div class="row"><button class="small" id="dlgNo">Cancel</button><button class="del" id="dlgYes">Delete</button></div>
+</dialog>
+<dialog id="settings">
+  <h2>Settings</h2>
+  <div class="lbl">Accent colour</div><div class="row" id="accents"></div>
+  <div class="lbl">Display &amp; alerts</div>
+  <label class="chk"><input type="checkbox" id="optCompact"> Compact letter list</label>
+  <label class="chk"><input type="checkbox" id="optConfetti"> Confetti when opening letters</label>
+  <label class="chk"><input type="checkbox" id="optNotify"> Notify me when letters unlock (tab must be open)</label>
+  <div class="lbl">My templates</div><div id="tplList"></div>
+  <div class="lbl">Letter font</div><select id="optFont"><option value="">Poppins</option><option value="serif">Serif</option><option value="hand">Handwriting</option></select>
+  <p class="hint" id="storeInfo"></p>
+  <div class="lbl">PIN lock <small>(a privacy screen, not encryption)</small></div>
+  <div class="row" style="flex-wrap:nowrap"><input id="pinNew" type="password" inputmode="numeric" maxlength="8" placeholder="4–8 digits"><button class="small" id="pinSet">Set</button><button class="small" id="pinOff">Remove</button></div>
+  <button class="small" id="lockNow" style="margin-top:10px">🔒 Lock now</button>
+  <div class="lbl">Danger zone</div>
+  <button class="del" id="wipeBtn">Delete all letters</button>
+  <p class="hint">Shortcuts: Ctrl/Cmd + Enter locks a letter · Esc cancels editing</p>
+  <div class="row"><button class="small" id="closeSettings">Done</button></div>
+</dialog>
+<dialog id="insights"><h2>Insights</h2><div id="insBody"></div><div class="row" style="margin-top:16px"><button class="small" id="closeIns">Close</button></div></dialog>
+<dialog id="calDlg">
+  <div class="row between" style="flex-wrap:nowrap"><button class="small" id="calPrev" aria-label="Previous month">‹</button><h2 id="calTitle"></h2><button class="small" id="calNext" aria-label="Next month">›</button></div>
+  <div class="cal" id="calGrid"></div>
+  <p class="hint" id="calNote">Dots mark unlock days. Tap an empty future day to use it as your open date.</p>
+  <div class="row"><button class="small" id="calClose">Close</button></div>
+</dialog>
+<dialog id="tplDlg">
+  <h2>Save as template</h2>
+  <p>Saves your current text as a reusable starting point.</p>
+  <input id="tplName" maxlength="30" placeholder="Template name" aria-label="Template name">
+  <div class="err" id="tplErr" role="alert"></div>
+  <div class="row" style="margin-top:12px"><button class="small" id="tplCancel">Cancel</button><button class="primary" id="tplSave" style="width:auto;margin:0;padding:10px 22px">Save</button></div>
+</dialog>
+<dialog id="pwDlg">
+  <h2>🔐 Password</h2>
+  <p>This letter is encrypted. Enter its password to read it.</p>
+  <input id="pwIn" type="password" autocomplete="off" aria-label="Letter password">
+  <div class="err" id="pwErr" role="alert"></div>
+  <div class="row" style="margin-top:14px"><button class="small" id="pwCancel">Cancel</button><button class="primary" id="pwOk" style="width:auto;margin:0;padding:10px 22px">Unlock</button></div>
+</dialog>
+<div id="pinScreen" class="pin hidden"><div class="card" style="max-width:320px;width:100%;text-align:center">
+  <h2>💌 Dear Me</h2><p style="color:var(--muted);margin:8px 0 16px">Enter your PIN</p>
+  <input id="pinInput" type="password" inputmode="numeric" maxlength="8" autocomplete="off" style="text-align:center" aria-label="PIN">
+  <div class="err" id="pinErr" role="alert"></div><button class="primary" id="pinGo">Unlock</button></div></div>
+<button id="toTop" class="icon-btn hidden" aria-label="Back to top">↑</button>
+<canvas id="confetti" class="hidden"></canvas>
+<div id="toast" role="status"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
